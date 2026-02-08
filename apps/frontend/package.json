@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@family-business/api": "workspace:*",
     "@family-business/theme": "workspace:*",
     "@family-business/types": "workspace:*",
     "@mantine/core": "^7.5.0",

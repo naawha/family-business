@@ -26,7 +26,6 @@
       "@/features/*": ["./src/features/*"],
       "@/models/*": ["./src/models/*"],
       "@/shared/*": ["./src/shared/*"],
-      "@family-business/api": ["../../packages/api/src"],
       "@family-business/types": ["../../packages/types"],
       "@family-business/theme": ["../../packages/theme"],
       "@family-business/models": ["../../packages/models/src"],

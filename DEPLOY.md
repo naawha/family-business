@@ -22,6 +22,8 @@ cd family-business
 pnpm install
 ```
 
+**Важно:** без `pnpm install` папки `node_modules` не будет, и команда `pnpm build` завершится ошибкой (`turbo: not found`). Всегда выполняйте установку зависимостей перед сборкой.
+
 ---
 
 ## 3. Переменные окружения
