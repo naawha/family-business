@@ -1,0 +1,35 @@
+{
+  "name": "family-business",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "backend:dev": "turbo run dev --filter=backend",
+    "frontend:dev": "turbo run dev --filter=frontend",
+    "prettier-check": "prettier -c --config .prettierrc.js './**/*.{js,jsx,ts,tsx}'",
+    "prettier-write": "prettier -c -w --config .prettierrc.js './**/*.{js,jsx,ts,tsx}'"
+  },
+  "devDependencies": {
+    "turbo": "^1.12.0",
+    "typescript": "^5.3.3",
+    "prettier": "^3.5.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0",
+  "pnpm": {
+    "overrides": {
+      "react-native-worklets": "0.5.1"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+/* Поле ввода прижато к низу страницы */
+.list {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+.inputBar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  background: var(--mantine-color-body);
+  border-top: 1px solid var(--mantine-color-default-border);
+}
+
+/* Мобильные: над нижним меню */
+@media (max-width: 47.9375em) {
+  .inputBar {
+    bottom: 56px;
+    padding-bottom: calc(var(--mantine-spacing-sm) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* Десктоп: низ экрана, справа от сайдбара (250px) */
+@media (min-width: 48em) {
+  .inputBar {
+    bottom: 0;
+    left: 250px;
+  }
+}

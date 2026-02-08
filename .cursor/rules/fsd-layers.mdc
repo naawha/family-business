@@ -1,0 +1,51 @@
+---
+description: FSD layer names and order (alphabetical = layer hierarchy)
+globs: apps/web/src/**
+alwaysApply: false
+---
+
+# FSD Architecture — Layers
+
+Layer directories are named so that **alphabetical order = layer order**. Top-first, bottom-last.
+
+## Layer Order (A→Z)
+
+| Layer            | Purpose                                                 |
+| ---------------- | ------------------------------------------------------- |
+| **app**          | App-wide setup: providers, store, router                |
+| **destinations** | Route-level views; only components imported in `/pages` |
+| **ensembles**    | Composite UI blocks (formerly `widgets`)                |
+| **features**     | User-facing actions, forms, flows                       |
+| **models**       | Business entities, API, state (formerly `entities`)     |
+| **shared**       | Reusable UI, utils, config                              |
+
+## Directory Structure
+
+```
+src/
+  app/
+  destinations/
+  ensembles/
+  features/
+  models/
+  shared/
+```
+
+## Destinations Layer
+
+- **Scope**: Only components that are imported in `/pages` (Next.js `pages/` or app router pages).
+- **Naming**: Suffix `-View`. Examples: `IndexView`, `CartView`, `NewsListView`, `LoginView`, `RegisterView`.
+
+## Naming Mapping
+
+| Old (classic FSD) | New          |
+| ----------------- | ------------ |
+| pages             | destinations |
+| widgets           | ensembles    |
+| entities          | models       |
+
+## Import Rules
+
+- Upper layers import from lower layers only
+- Order: `app` → `destinations` → `ensembles` → `features` → `models` → `shared`
+- Never import **up** (e.g. `features` must not import from `ensembles` or `destinations`)

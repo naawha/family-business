@@ -1,0 +1,106 @@
+---
+description: React component structure and styling conventions
+globs: **/*.tsx
+alwaysApply: false
+---
+
+# React Component Style Guide
+
+## File Structure
+
+Each component lives in a folder **named after the component**. The main file is always **index.tsx**.
+
+```
+\ComponentName
+  \index.tsx              # Main component file (required)
+  \ComponentName.module.scss  # Component styles
+  \ui                     # Nested UI components
+  \...                    # Other component-related files
+```
+
+- Folder name = component name (e.g. `LoginForm`, `DashboardLayout`).
+- Entry point = `index.tsx` inside that folder.
+
+## Component File Format
+
+Use this exact structure in `index.tsx`:
+
+```typescript
+import styles from "./ComponentName.module.scss"
+
+interface ComponentNameProps {
+  // Props definition
+}
+
+const ComponentName: FC<ComponentNameProps> = () => {
+  return (
+    // JSX
+  )
+}
+
+export default ComponentName
+```
+
+## Rules
+
+1. **Interface Naming**:
+   - Always use `ComponentNameProps` pattern
+   - Define interface before component
+
+2. **Component Declaration**:
+   - Use `const` with explicit type `FC<ComponentNameProps>`
+   - Component name matches folder name
+
+3. **Export**:
+   - Always use `export default` at the end
+   - Never inline export with component declaration
+
+4. **Styling**:
+   - Use CSS Modules (`.module.scss`)
+   - Import as `styles`
+   - File name matches component name
+   - Styles import must be last and separated from other imports by one blank line
+
+## Example
+
+```typescript
+import { useState } from "react"
+
+import styles from "./LoginForm.module.scss"
+
+interface LoginFormProps {
+  onSubmit: (email: string, password: string) => void
+  isLoading?: boolean
+}
+
+const LoginForm: FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  return (
+    <form className={styles.form}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className={styles.input}
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className={styles.input}
+      />
+      <button
+        type="submit"
+        disabled={isLoading}
+        className={styles.button}
+      >
+        Login
+      </button>
+    </form>
+  )
+}
+
+export default LoginForm
+```

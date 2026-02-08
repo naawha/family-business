@@ -1,0 +1,43 @@
+.header {
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border-bottom: 1px solid var(--mantine-color-default-border);
+  background: var(--mantine-color-body);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.title {
+  width: 100%;
+}
+
+.close {
+  display: none;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+}
+
+.contentWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.scrollableContent {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-top: var(--mantine-spacing-md);
+}
+
+.footer {
+  margin-top: var(--mantine-spacing-md);
+  padding-top: var(--mantine-spacing-md);
+  padding-bottom: calc(var(--mantine-spacing-md) + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--mantine-color-default-border);
+  flex-shrink: 0;
+}

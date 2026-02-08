@@ -1,0 +1,17 @@
+.headerButtonMobile {
+  display: none;
+}
+
+.headerButtonDesktop {
+  display: inline-flex;
+}
+
+@media (max-width: 47.9375em) {
+  .headerButtonMobile {
+    display: inline-flex;
+  }
+
+  .headerButtonDesktop {
+    display: none;
+  }
+}

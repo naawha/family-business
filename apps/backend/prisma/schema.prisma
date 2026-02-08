@@ -1,0 +1,176 @@
+// Prisma schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  name        String
+  avatarEmoji String?
+  avatarColor String?  // HEX color
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  familyMembers     FamilyMember[]
+  createdTodos      Todo[]              @relation("TodoCreator")
+  assignedTodos     Todo[]              @relation("TodoAssignee")
+  createdShopping   ShoppingItem[]
+  createdPlanned    PlannedPurchase[]
+  createdRecipes    Recipe[]
+}
+
+model Family {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members           FamilyMember[]
+  invites           Invite[]
+  todos             Todo[]
+  shoppingItems     ShoppingItem[]
+  plannedPurchases  PlannedPurchase[]
+  recurringRules    RecurringRule[]
+  recipes           Recipe[]
+}
+
+model FamilyMember {
+  id       String   @id @default(uuid())
+  familyId String
+  userId   String
+  role     String // 'admin' | 'member'
+  joinedAt DateTime @default(now())
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([familyId, userId])
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  familyId  String
+  token     String   @unique
+  email     String?  // null for QR-only
+  role      String   @default("member") // 'admin' | 'member'
+  kind      String   // 'email' | 'qr'
+  status    String   @default("pending") // 'pending' | 'accepted' | 'expired'
+  expiresAt DateTime
+  inviterId String?
+  createdAt DateTime @default(now())
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+}
+
+model Todo {
+  id              String    @id @default(uuid())
+  familyId        String
+  title           String
+  description     String?
+  completed       Boolean   @default(false)
+  isImportant     Boolean   @default(false)
+  dueDate         DateTime?
+  createdById     String
+  assignedToId    String?
+  recurringRuleId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  completedAt     DateTime?
+
+  family       Family          @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy    User            @relation("TodoCreator", fields: [createdById], references: [id])
+  assignedTo   User?           @relation("TodoAssignee", fields: [assignedToId], references: [id])
+  recurringRule RecurringRule? @relation(fields: [recurringRuleId], references: [id])
+}
+
+model ShoppingItem {
+  id                String   @id @default(uuid())
+  familyId          String
+  name              String
+  quantity          Int?
+  unit              String?  // 'шт' | 'г' | 'кг' | 'л' | 'мл'
+  category          String?
+  purchased         Boolean  @default(false)
+  createdById       String
+  recipeId          String?  // Связь с рецептом, если добавлено из рецепта
+  recipeIngredientId String? // Связь с конкретным ингредиентом рецепта
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  family    Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy User   @relation(fields: [createdById], references: [id])
+  recipe    Recipe? @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+}
+
+model PlannedPurchase {
+  id            String    @id @default(uuid())
+  familyId      String
+  name          String
+  description   String?
+  estimatedCost Float?
+  targetDate    DateTime?
+  priority      String    @default("medium")
+  createdById   String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  family    Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy User   @relation(fields: [createdById], references: [id])
+}
+
+model RecurringRule {
+  id             String   @id @default(uuid())
+  familyId       String
+  frequency      String   // 'daily' | 'weekly' | 'monthly' | 'yearly'
+  interval       Int
+  startDate      DateTime
+  endDate        DateTime?
+  nextOccurrence DateTime
+  templateData   String   // JSON string
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  todos  Todo[]
+}
+
+model Recipe {
+  id          String   @id @default(uuid())
+  familyId   String?  // null для общих рецептов, String для пользовательских
+  name        String
+  imageUrl    String?
+  category    String?  // 'breakfast' | 'lunch' | 'dinner' | 'dessert' | 'snack' | 'other'
+  servings    Int      @default(4) // Количество порций по умолчанию
+  emoji       String?  // Эмодзи рецепта (например 🍳)
+  instructions String? // Инструкции по приготовлению (текст или JSON)
+  isPublic    Boolean  @default(false) // Общий рецепт или только для семьи
+  createdById String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  family         Family?          @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  createdBy      User             @relation(fields: [createdById], references: [id])
+  ingredients    RecipeIngredient[]
+  shoppingItems  ShoppingItem[]
+}
+
+model RecipeIngredient {
+  id          String   @id @default(uuid())
+  recipeId    String
+  name        String   // Название ингредиента
+  quantity    Float    // Количество на одну порцию
+  unit        String?  // 'шт' | 'г' | 'кг' | 'л' | 'мл' | 'ст.л.' | 'ч.л.' | 'стакан'
+  notes       String?  // Дополнительные заметки (например, "по вкусу")
+  order       Int      @default(0) // Порядок отображения
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
