@@ -15,10 +15,10 @@ module.exports = {
       watch: false,
     },
     {
-      name: 'family-business-web',
+      name: 'family-business-frontend',
       cwd: './apps/frontend',
-      script: 'node_modules/.bin/next',
-      args: 'start -p 3001',
+      script: 'pnpm',
+      args: 'run start',
       env: { NODE_ENV: 'production' },
       instances: 1,
       autorestart: true,

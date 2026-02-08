@@ -102,15 +102,19 @@ pnpm build
 
 ---
 
-## 5. Миграции базы данных
+## 5. Prisma: generate и миграции
 
-Один раз перед первым запуском (из корня или из `apps/backend`):
+Перед первым запуском бэкенда (и после каждого `pnpm install` на сервере) нужно сгенерировать Prisma Client и применить миграции. Из **корня** репозитория:
 
 ```bash
 cd apps/backend
+npx prisma generate
 npx prisma migrate deploy
 cd ../..
 ```
+
+- **`prisma generate`** — генерирует клиент в `node_modules`; без этого бэкенд падает с ошибкой «@prisma/client did not initialize yet».
+- **`prisma migrate deploy`** — применяет миграции к БД.
 
 Убедитесь, что `DATABASE_URL` в `apps/backend/.env` указывает на нужный файл БД (например, `prod.db` в `prisma/data/`).
 
@@ -126,7 +130,9 @@ pm2 start ecosystem.config.cjs
 
 Так запустятся:
 - **Backend:** порт 3000 (`apps/backend` → `node dist/main.js`).
-- **Frontend:** порт 3001 (`apps/frontend` → `next start -p 3001`).
+- **Frontend:** порт 3001 (`apps/frontend` → `pnpm run start`, т.е. `next start -p 3001`).
+
+**Если frontend в PM2 в статусе errored и логи пустые:** проверьте, что (1) выполнен `pnpm build` (в `apps/frontend` есть папка `.next`), (2) на сервере в PATH есть `pnpm` (при запуске через PM2). Проверка вручную: `cd apps/frontend && pnpm run start` — должны появиться сообщения Next.js или текст ошибки.
 
 Полезные команды PM2:
 
@@ -148,7 +154,7 @@ pm2 startup             # автозапуск при перезагрузке �
    ```bash
    pnpm install
    pnpm build
-   cd apps/backend && npx prisma migrate deploy && cd ../..
+   cd apps/backend && npx prisma generate && npx prisma migrate deploy && cd ../..
    pm2 restart all
    ```
 
@@ -160,14 +166,62 @@ Backend слушает порт 3000, frontend — 3001. Пользовател�
 
 Все запросы к API идут с префиксом `/api`. В nginx на одном домене: `/api` и `/socket.io` — на бэкенд (порт 3000), остальное — на фронт (порт 3001).
 
-Пример одного сервера на домене (замените `your-domain.com` и пути к сертификатам):
+### Порядок: сначала HTTP, потом сертификат, потом HTTPS
+
+Чтобы получить сертификат Let's Encrypt, домен должен уже отдавать сайт по **HTTP (порт 80)** — certbot проверяет владение доменом через HTTP. Поэтому делайте так:
+
+1. **DNS:** A-запись домена указывает на IP вашего сервера.
+2. **nginx по HTTP (порт 80):** поднимите nginx **без** SSL — один блок `server { listen 80; ... }` с теми же `location` (прокси на 3000 и 3001). Пример ниже.
+3. **Проверка:** откройте в браузере `http://ваш-домен.com` — должен открываться сайт.
+4. **Сертификат:** `sudo apt install certbot python3-certbot-nginx && sudo certbot --nginx -d ваш-домен.com`. Certbot получит сертификат и **сам добавит** в конфиг редирект на HTTPS и пути к сертификатам.
+5. Либо вручную: после выдачи сертификата добавьте второй блок `server { listen 443 ssl; ... }` с `ssl_certificate` и `ssl_certificate_key` (пути из шага 4) и редирект с 80 на 443.
+
+**Временный конфиг только на HTTP (шаг 2)** — пока нет сертификата, используйте такой блок (замените `your-domain.com`):
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location /api {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /socket.io {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location / {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Сохраните конфиг, выполните `sudo nginx -t && sudo systemctl reload nginx`, проверьте сайт по HTTP, затем запустите certbot. После успешного `certbot --nginx` HTTPS и редирект с HTTP обычно уже настроены.
+
+**Итоговый конфиг с HTTPS** (если настраиваете вручную после получения сертификата):
 
 ```nginx
 server {
     listen 443 ssl;
     server_name your-domain.com;
-    ssl_certificate /path/to/fullchain.pem;
-    ssl_certificate_key /path/to/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
 
     # API и Swagger — на бэкенд (3000)
     location /api {
@@ -212,7 +266,7 @@ server {
 3. Создать `apps/backend/.env` (DATABASE_URL, JWT_SECRET, PORT, NODE_ENV).
 4. Создать `apps/frontend/.env.production` с NEXT_PUBLIC_API_URL и NEXT_PUBLIC_WS_URL (или экспортировать их перед сборкой).
 5. Выполнить `pnpm build`.
-6. Выполнить миграции: `cd apps/backend && npx prisma migrate deploy`.
+6. Выполнить Prisma: `cd apps/backend && npx prisma generate && npx prisma migrate deploy`.
 7. Запустить: `pm2 start ecosystem.config.cjs`, затем `pm2 save` и `pm2 startup`.
 8. При необходимости настроить nginx и HTTPS.
 
