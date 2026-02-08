@@ -1,0 +1,7 @@
+# Пример для доступа к GitHub Packages (@naawha/next-rtk-wrapper).
+# Скопируйте на сервер в ~/.npmrc и подставьте свой токен:
+#
+# @naawha:registry=https://npm.pkg.github.com
+# //npm.pkg.github.com/:_authToken=ВАШ_GITHUB_TOKEN
+#
+# Токен: GitHub → Settings → Developer settings → Personal access tokens → read:packages

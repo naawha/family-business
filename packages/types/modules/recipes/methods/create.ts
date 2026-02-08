@@ -1,4 +1,4 @@
-import type { RecipeType, RecipeCategoryType } from '../../../entities/recipeType'
+import type { RecipeType } from '../../../entities/recipeType'
 import type { RecipeIngredientUnitType } from '../../../entities/recipeIngredientType'
 
 export type CreateIngredientInput = {
@@ -13,7 +13,6 @@ export type CreateBodyType = {
   familyId?: string | null
   name: string
   imageUrl?: string
-  category?: RecipeCategoryType
   servings?: number
   emoji?: string
   instructions?: string

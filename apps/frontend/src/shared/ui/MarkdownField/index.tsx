@@ -1,12 +1,6 @@
 import { FC, useRef, useCallback } from 'react'
 import { Text, Textarea, ActionIcon, Group } from '@mantine/core'
-import {
-  IconBold,
-  IconItalic,
-  IconList,
-  IconListNumbers,
-  IconHeading,
-} from '@tabler/icons-react'
+import { IconBold, IconItalic, IconList, IconListNumbers, IconHeading } from '@tabler/icons-react'
 import type { TextareaProps } from '@mantine/core'
 
 const insertMarkdown = (
@@ -79,7 +73,7 @@ const MarkdownField: FC<MarkdownFieldProps> = ({
   return (
     <div>
       {label != null && (
-        <Text size="sm" fw={500} mb={5} component="label" required={required}>
+        <Text size="sm" fw={500} mb={5} component="label">
           {label}
         </Text>
       )}

@@ -47,7 +47,6 @@ const EditRecipeModal: FC<EditRecipeModalProps> = ({ opened, onClose, recipe }) 
         id: recipe?.id || '',
         body: {
           name: values.name.trim(),
-          category: 'other',
           servings: values.servings,
           emoji: values.emoji || undefined,
           instructions: values.instructions.trim() || undefined,

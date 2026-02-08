@@ -1,6 +1,7 @@
 import { FC, useState } from 'react'
 import { Button, Paper, Text } from '@mantine/core'
-import { FamilyQRInviteModal, useFamily } from '@/features/family'
+import { FamilyQRInviteModal } from '@/features/family'
+import { useFamily } from '@/models/accounts'
 import DashboardLayout from '@/ensembles/dashboard-layout/ui/DashboardLayout'
 import FamilyMembersList from './ui/FamilyMembersList'
 import { IconPlus } from '@tabler/icons-react'

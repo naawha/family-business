@@ -16,6 +16,24 @@
 
 ## 2. Клонирование и установка зависимостей
 
+### Доступ к GitHub Packages (`@naawha/next-rtk-wrapper`)
+
+Пакет `@naawha/next-rtk-wrapper` публикуется в GitHub Packages. Чтобы `pnpm install` мог его скачать, на сервере нужна авторизация.
+
+1. Создайте **Personal Access Token** в GitHub: Settings → Developer settings → Personal access tokens → Generate new token. Включите право **read:packages** (и при необходимости **repo**, если пакет из приватного репозитория).
+2. На сервере создайте или отредактируйте файл **`~/.npmrc`**:
+
+```ini
+@naawha:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=ВАШ_GITHUB_TOKEN
+```
+
+Замените `ВАШ_GITHUB_TOKEN` на созданный токен. Не коммитьте этот файл и не храните токен в репозитории.
+
+После этого `pnpm install` сможет скачать пакет с GitHub Packages.
+
+### Установка
+
 ```bash
 git clone <URL-вашего-репозитория> family-business
 cd family-business

@@ -130,7 +130,6 @@ export class RecipesService {
     }
 
     if (data.imageUrl !== undefined) createData.imageUrl = data.imageUrl
-    if (data.category !== undefined) createData.category = data.category
     if (data.emoji !== undefined) createData.emoji = data.emoji
     if (data.instructions !== undefined) createData.instructions = data.instructions
 
@@ -166,7 +165,6 @@ export class RecipesService {
     const updateData: Record<string, unknown> = {}
     if (data.name !== undefined) updateData.name = data.name
     if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl
-    if (data.category !== undefined) updateData.category = data.category
     if (data.servings !== undefined) updateData.servings = data.servings
     if (data.emoji !== undefined) updateData.emoji = data.emoji
     if (data.instructions !== undefined) updateData.instructions = data.instructions
