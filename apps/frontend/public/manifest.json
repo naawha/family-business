@@ -2,6 +2,7 @@
   "name": "Семейный бизнес",
   "short_name": "Семья",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
