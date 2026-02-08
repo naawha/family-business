@@ -11,14 +11,17 @@ const FAMILY_COOKIE_KEY = 'family-business-family-id'
  */
 function parseCookieString(cookieString: string | undefined): Record<string, string> {
   if (!cookieString) return {}
-  
-  return cookieString.split(';').reduce((acc, cookie) => {
-    const [key, value] = cookie.trim().split('=')
-    if (key && value) {
-      acc[key] = decodeURIComponent(value)
-    }
-    return acc
-  }, {} as Record<string, string>)
+
+  return cookieString.split(';').reduce(
+    (acc, cookie) => {
+      const [key, value] = cookie.trim().split('=')
+      if (key && value) {
+        acc[key] = decodeURIComponent(value)
+      }
+      return acc
+    },
+    {} as Record<string, string>,
+  )
 }
 
 /**
@@ -32,22 +35,23 @@ function getCookieFromServer(key: string): string | null {
     const cookies = (process as any).__NEXT_COOKIES__
     return cookies[key] || null
   }
-  
+
   // Try to parse from cookie header if available in global scope
   if (typeof globalThis !== 'undefined' && (globalThis as any).__NEXT_COOKIE_HEADER__) {
     const cookieString = (globalThis as any).__NEXT_COOKIE_HEADER__
     const parsed = parseCookieString(cookieString)
     return parsed[key] || null
   }
-  
+
   return null
 }
 
-// Cookie options
+const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:'
+
 const cookieOptions = {
-  expires: 7, // 7 days
-  sameSite: 'strict' as const,
-  secure: process.env.NODE_ENV === 'production',
+  expires: 365, // 1 year
+  sameSite: 'lax' as const, // strict часто мешает
+  secure: isHttps,
 }
 
 export function saveAuth(data: RegisterResponseType): void {
@@ -72,46 +76,46 @@ export function loadAuth(cookieHeader?: string): RegisterResponseType | null {
     try {
       const token = Cookies.get(TOKEN_COOKIE_KEY)
       const userRaw = Cookies.get(USER_COOKIE_KEY)
-      
+
       if (!token || !userRaw) return null
-      
+
       const user = JSON.parse(userRaw)
       if (!user?.id || !token) return null
-      
+
       return { user, token }
     } catch {
       return null
     }
   }
-  
+
   // Server-side: parse from cookie header (Pages Router)
   if (cookieHeader) {
     try {
       const parsed = parseCookieString(cookieHeader)
       const token = parsed[TOKEN_COOKIE_KEY]
       const userRaw = parsed[USER_COOKIE_KEY]
-      
+
       if (!token || !userRaw) return null
-      
+
       const user = JSON.parse(userRaw)
       if (!user?.id || !token) return null
-      
+
       return { user, token }
     } catch {
       return null
     }
   }
-  
+
   // Fallback: try to get from server context
   try {
     const token = getCookieFromServer(TOKEN_COOKIE_KEY)
     const userRaw = getCookieFromServer(USER_COOKIE_KEY)
-    
+
     if (!token || !userRaw) return null
-    
+
     const user = JSON.parse(userRaw)
     if (!user?.id || !token) return null
-    
+
     return { user, token }
   } catch {
     return null
@@ -134,13 +138,13 @@ export function getToken(cookieHeader?: string): string | null {
   if (typeof window !== 'undefined') {
     return Cookies.get(TOKEN_COOKIE_KEY) || null
   }
-  
+
   // Server-side: parse from cookie header (Pages Router)
   if (cookieHeader) {
     const parsed = parseCookieString(cookieHeader)
     return parsed[TOKEN_COOKIE_KEY] || null
   }
-  
+
   // Fallback: try to get from server context
   return getCookieFromServer(TOKEN_COOKIE_KEY)
 }
@@ -159,13 +163,13 @@ export function getCurrentFamily(cookieHeader?: string): string | null {
   if (typeof window !== 'undefined') {
     return Cookies.get(FAMILY_COOKIE_KEY) || null
   }
-  
+
   // Server-side: parse from cookie header (Pages Router)
   if (cookieHeader) {
     const parsed = parseCookieString(cookieHeader)
     return parsed[FAMILY_COOKIE_KEY] || null
   }
-  
+
   // Fallback: try to get from server context
   return getCookieFromServer(FAMILY_COOKIE_KEY)
 }

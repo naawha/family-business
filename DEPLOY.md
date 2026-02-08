@@ -97,6 +97,7 @@ pnpm build
 ```
 
 Собираются backend (NestJS) и frontend (Next.js). После сборки:
+
 - backend: `apps/backend/dist/`
 - frontend: `apps/frontend/.next/`
 
@@ -114,9 +115,10 @@ cd ../..
 ```
 
 - **`prisma generate`** — генерирует клиент в `node_modules`; без этого бэкенд падает с ошибкой «@prisma/client did not initialize yet».
-- **`prisma migrate deploy`** — применяет миграции к БД.
+- **`prisma migrate deploy`** — применяет миграции к БД (нужна папка `prisma/migrations` в репозитории).
+- **Если таблиц нет** (ошибка «The table `main.User` does not exist»): либо в репозитории нет миграций — тогда на сервере один раз выполните **`npx prisma db push`** из `apps/backend` (создаст таблицы по схеме без миграций). Либо создайте миграции локально: `cd apps/backend && npx prisma migrate dev --name init`, закоммитьте папку `prisma/migrations`, затем на сервере — `npx prisma migrate deploy`.
 
-Убедитесь, что `DATABASE_URL` в `apps/backend/.env` указывает на нужный файл БД (например, `prod.db` в `prisma/data/`).
+Убедитесь, что `DATABASE_URL` в `apps/backend/.env` указывает на нужный файл БД (например, `prod.db` в `prisma/data/`). Папку `prisma/data` создайте при необходимости: `mkdir -p apps/backend/prisma/data`.
 
 ---
 
@@ -129,6 +131,7 @@ pm2 start ecosystem.config.cjs
 ```
 
 Так запустятся:
+
 - **Backend:** порт 3000 (`apps/backend` → `node dist/main.js`).
 - **Frontend:** порт 3001 (`apps/frontend` → `pnpm run start`, т.е. `next start -p 3001`).
 
