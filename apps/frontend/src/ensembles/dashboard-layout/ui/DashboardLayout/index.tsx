@@ -104,6 +104,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
       <AppShell.Footer
         hiddenFrom="sm"
         withBorder
+        pb={`calc(var(--mantine-spacing-sm) + var(--safe-bottom))`}
         style={{
           padding: '4px 8px',
         }}

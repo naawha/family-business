@@ -14,7 +14,11 @@ const Document: FC<DocumentProps> = () => {
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Family Business" />
+        <meta name="apple-mobile-web-app-title" content="Семейный бизнес" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
       </Head>
       <body>

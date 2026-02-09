@@ -3,7 +3,7 @@ import type * as Recipes from '@family-business/types/modules/recipes'
 
 const recipesService = MainService.injectEndpoints({
   endpoints: (builder) => ({
-    recipesList: builder.query<Recipes.ListResponseType, Recipes.ListParamsType | undefined>({
+    recipesList: builder.query<Recipes.ListResponseType, Recipes.ListParamsType | void>({
       query: (params) => {
         const searchParams = new URLSearchParams()
         if (params?.familyId) searchParams.append('familyId', params?.familyId)

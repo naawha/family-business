@@ -32,7 +32,9 @@ const RecipeList: FC = () => {
       items={recipes}
       getKey={(recipe) => recipe.id}
       loading={isLoading}
-      emptyText="Рецептов пока нет. Создайте первый рецепт!"
+      emptyText={
+        search.trim() ? 'Рецепты не найдены' : 'Рецептов пока нет. Создайте первый рецепт!'
+      }
       onRefresh={handleRefresh}
       header={
         <Box m="md">
