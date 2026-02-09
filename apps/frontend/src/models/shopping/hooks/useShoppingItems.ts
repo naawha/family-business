@@ -13,13 +13,10 @@ const filterShoppingItems = (items: ShoppingItemType[], query?: string): Shoppin
   return items.filter((item) => item.name.toLowerCase().includes(query?.toLowerCase() ?? ''))
 }
 
-const useShoppingItems = (query?: string) => {
-  const { data: items = [], isLoading, refetch } = useShoppingListQuery()
+const useShoppingItems = (skip: boolean = false) => {
+  const { data: items = [], isLoading, refetch } = useShoppingListQuery(undefined, { skip })
 
-  const sortedItems: ShoppingItemType[] = useMemo(
-    () => sortShoppingItems(filterShoppingItems(items, query)),
-    [items, query],
-  )
+  const sortedItems: ShoppingItemType[] = useMemo(() => sortShoppingItems(items), [items])
 
   return { items: sortedItems, isLoading, refetch }
 }

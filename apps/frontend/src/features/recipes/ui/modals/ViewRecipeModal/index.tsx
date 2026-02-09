@@ -37,7 +37,7 @@ interface ViewRecipeDrawerProps {
 const ViewRecipeDrawer: FC<ViewRecipeDrawerProps> = ({ opened, onClose, recipe }) => {
   const { family } = useFamily()
   const { ingredients, isLoading: ingredientsLoading } = useRecipeIngredients(recipe?.id || '')
-  const { items: shoppingItems = [] } = useShoppingItems(undefined, { skip: !opened })
+  const { items: shoppingItems = [] } = useShoppingItems(!opened)
   const [createShoppingItem] = useCreateShoppingItemMutation()
 
   const [selectedPortionScale, setSelectedPortionScale] = useState(1)
