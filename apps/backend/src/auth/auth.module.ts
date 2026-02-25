@@ -11,7 +11,6 @@ import { UsersModule } from '../users/users.module'
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'secret',
-      signOptions: { expiresIn: '7d' },
     }),
   ],
   providers: [AuthService, JwtStrategy],

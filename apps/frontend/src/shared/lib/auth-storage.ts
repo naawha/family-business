@@ -49,7 +49,7 @@ function getCookieFromServer(key: string): string | null {
 const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:'
 
 const cookieOptions = {
-  expires: 365, // 1 year
+  expires: 365 * 10, // 10 years
   sameSite: 'lax' as const, // strict часто мешает
   secure: isHttps,
 }
