@@ -62,6 +62,21 @@ const shoppingService = MainService.injectEndpoints({
         method: 'PATCH',
         body: { purchased },
       }),
+      async onQueryStarted({ id, purchased }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          shoppingService.util.updateQueryData('shoppingList', undefined, (draft) => {
+            const item = draft.find((i) => i.id === id)
+            if (item) {
+              item.purchased = purchased
+            }
+          })
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
       invalidatesTags: (_, __, { id }) => [{ type: RTK_TAGS.ShoppingItem, id }],
     }),
   }),

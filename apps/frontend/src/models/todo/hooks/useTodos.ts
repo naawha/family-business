@@ -5,7 +5,7 @@ import { useTodoListQuery } from '../api'
 
 const sortTodos = (todos: TodoType[], currentUserId: string | undefined): TodoType[] => {
   return [...todos].sort((a, b) => {
-    if (a.completed !== b.completed) return a.completed ? 1 : -1
+    //if (a.completed !== b.completed) return a.completed ? 1 : -1
     const aMine = a.assignedToId === currentUserId ? 0 : 1
     const bMine = b.assignedToId === currentUserId ? 0 : 1
     if (aMine !== bMine) return aMine - bMine

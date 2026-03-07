@@ -72,6 +72,21 @@ const TodoService = MainService.injectEndpoints({
         method: 'PATCH',
         body: { completed },
       }),
+      async onQueryStarted({ id, completed }, { dispatch, queryFulfilled }) {
+        const patchResult = dispatch(
+          TodoService.util.updateQueryData('todoList', undefined, (draft) => {
+            const item = draft.find((i) => i.id === id)
+            if (item) {
+              item.completed = completed
+            }
+          })
+        )
+        try {
+          await queryFulfilled
+        } catch {
+          patchResult.undo()
+        }
+      },
       invalidatesTags: (_, __, { id }) => [{ type: RTK_TAGS.Todo, id }],
     }),
   }),

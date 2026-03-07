@@ -7,9 +7,14 @@ import { useDisclosure } from '@mantine/hooks'
 import {
   IconChecklist,
   IconShoppingCart,
-  IconSettings,
   IconBuildingCommunity,
   IconBook,
+  IconBookFilled,
+  IconSettings,
+  IconSettingsFilled,
+  IconShoppingCartFilled,
+  IconBriefcase,
+  IconBriefcaseFilled,
 } from '@tabler/icons-react'
 import { useFamily } from '@/models/accounts'
 import { PageHeader } from '@/shared/ui'
@@ -79,15 +84,9 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           active={router.pathname.startsWith('/dashboard/recipes')}
         />
         <NavLink
-          href="/dashboard/settings"
-          label="Настройки"
-          leftSection={<IconSettings size={20} />}
-          active={router.pathname === '/dashboard/settings'}
-        />
-        <NavLink
           href="/dashboard/family"
           label="Семья"
-          leftSection={<IconBuildingCommunity size={20} />}
+          leftSection={<IconSettings size={20} />}
           active={router.pathname === '/dashboard/family'}
         />
       </AppShell.Navbar>
@@ -113,11 +112,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           <Box style={{ flex: 1 }}>
             <NavLink
               href="/dashboard/todos"
-              active={router.pathname === '/dashboard/todos'}
               style={{ padding: 4 }}
               label={
                 <Stack gap={2} align="center">
-                  <IconChecklist size={20} />
+                  {router.pathname === '/dashboard/todos' ? (
+                    <IconBriefcaseFilled size={20} />
+                  ) : (
+                    <IconBriefcase size={20} />
+                  )}
                   <Text size="xs">Задачи</Text>
                 </Stack>
               }
@@ -126,11 +128,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           <Box style={{ flex: 1 }}>
             <NavLink
               href="/dashboard/shopping"
-              active={router.pathname === '/dashboard/shopping'}
               style={{ padding: 4 }}
               label={
                 <Stack gap={2} align="center">
-                  <IconShoppingCart size={20} />
+                  {router.pathname === '/dashboard/shopping' ? (
+                    <IconShoppingCartFilled size={20} />
+                  ) : (
+                    <IconShoppingCart size={20} />
+                  )}
                   <Text size="xs">Покупки</Text>
                 </Stack>
               }
@@ -139,11 +144,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           <Box style={{ flex: 1 }}>
             <NavLink
               href="/dashboard/recipes"
-              active={router.pathname.startsWith('/dashboard/recipes')}
               style={{ padding: 4 }}
               label={
                 <Stack gap={2} align="center">
-                  <IconBook size={20} />
+                  {router.pathname.startsWith('/dashboard/recipes') ? (
+                    <IconBookFilled size={20} />
+                  ) : (
+                    <IconBook size={20} />
+                  )}
                   <Text size="xs">Рецепты</Text>
                 </Stack>
               }
@@ -152,11 +160,14 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           <Box style={{ flex: 1 }}>
             <NavLink
               href="/dashboard/family"
-              active={router.pathname === '/dashboard/family'}
               style={{ padding: 4 }}
               label={
                 <Stack gap={2} align="center">
-                  <IconBuildingCommunity size={20} />
+                  {router.pathname === '/dashboard/family' ? (
+                    <IconSettingsFilled size={20} />
+                  ) : (
+                    <IconSettings size={20} />
+                  )}
                   <Text size="xs">Семья</Text>
                 </Stack>
               }

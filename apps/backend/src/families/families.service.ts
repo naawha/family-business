@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common'
+import { Injectable, ForbiddenException, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 
 const familyInclude = {
@@ -41,18 +37,7 @@ export class FamiliesService {
       where: { id },
       include: familyInclude,
     })
-    
-    // Отладочное логирование (можно убрать позже)
-    if (family?.members) {
-      console.log('Family members with avatars:', 
-        family.members.map(m => ({
-          name: m.user?.name,
-          avatarEmoji: m.user?.avatarEmoji,
-          avatarColor: m.user?.avatarColor,
-        }))
-      )
-    }
-    
+
     return family
   }
 
@@ -85,11 +70,7 @@ export class FamiliesService {
     })
   }
 
-  async removeMember(
-    userId: string,
-    familyId: string,
-    memberId: string,
-  ): Promise<void> {
+  async removeMember(userId: string, familyId: string, memberId: string): Promise<void> {
     const family = await this.findOneForUser(userId, familyId)
     const target = family.members.find((m) => m.id === memberId)
     if (!target) throw new NotFoundException('Member not found')
