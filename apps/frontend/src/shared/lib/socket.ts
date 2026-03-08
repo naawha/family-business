@@ -1,6 +1,8 @@
 import { io, Socket } from 'socket.io-client'
 import { API_URL } from '@/shared/config'
 
+const DEBUG = typeof window !== 'undefined' && window.location.search.includes('notify_debug=1')
+
 let socket: Socket | null = null
 
 /**
@@ -26,10 +28,20 @@ export function getSocket(): Socket | null {
 
   if (!socket) {
     const url = getSocketUrl()
+    if (DEBUG) console.log('[Notifications] Socket URL:', url)
     socket = io(url, {
       path: '/socket.io',
       transports: ['websocket', 'polling'],
       autoConnect: false,
+    })
+    socket.on('connect', () => {
+      if (DEBUG) console.log('[Notifications] Socket connected:', socket?.id)
+    })
+    socket.on('connect_error', (err) => {
+      console.warn('[Notifications] Socket connect error:', err.message)
+    })
+    socket.on('disconnect', (reason) => {
+      if (DEBUG) console.log('[Notifications] Socket disconnected:', reason)
     })
   }
 
@@ -43,7 +55,10 @@ export function connectSocket(familyId: string): void {
   const s = getSocket()
   if (!s) return
 
-  const doJoin = () => s.emit('family:join', familyId)
+  const doJoin = () => {
+    s.emit('family:join', familyId)
+    if (DEBUG) console.log('[Notifications] Joined family room:', familyId)
+  }
   if (s.connected) {
     doJoin()
     return

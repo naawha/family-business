@@ -1,12 +1,15 @@
 import { FC, useEffect, useCallback } from 'react'
 import { useStore } from 'react-redux'
 import { notifications } from '@mantine/notifications'
+
+const DEBUG =
+  typeof window !== 'undefined' && window.location.search.includes('notify_debug=1')
 import {
   connectSocket,
   disconnectSocket,
   onSocketEvent,
 } from '@/shared/lib/socket'
-import { useCurrentFamily } from '@/shared/lib/useAuth'
+import { useFamily } from '@/models/accounts'
 import { RTK_TAGS, type RtkTagType } from '@/shared/api'
 import MainService from '@/shared/api/service'
 
@@ -42,6 +45,10 @@ function showNotification(event: string, data: unknown): void {
   const title = NOTIFICATION_TITLES[event] || 'Обновление'
   const message = getNotificationMessage(event, data)
 
+  if (DEBUG) {
+    console.log('[Notifications] Showing:', title, message, 'document.hidden:', document?.hidden, 'permission:', typeof Notification !== 'undefined' ? Notification.permission : 'N/A')
+  }
+
   if (typeof document !== 'undefined' && document.hidden) {
     // App in background — use browser Notification API
     if ('Notification' in window && Notification.permission === 'granted') {
@@ -74,6 +81,7 @@ export const NotificationProviderInner: FC<NotificationProviderProps> = ({
 
   const handleSocketEvent = useCallback(
     (event: string) => (data: unknown) => {
+      if (DEBUG) console.log('[Notifications] Event received:', event, data)
       const tags = INVALIDATE_TAGS[event]
       if (tags) {
         store.dispatch(MainService.util.invalidateTags(tags))
@@ -84,7 +92,11 @@ export const NotificationProviderInner: FC<NotificationProviderProps> = ({
   )
 
   useEffect(() => {
-    if (!familyId) return
+    if (!familyId) {
+      if (DEBUG) console.log('[Notifications] No familyId, skipping socket')
+      return
+    }
+    if (DEBUG) console.log('[Notifications] Setting up socket for family:', familyId)
 
     connectSocket(familyId)
 
@@ -109,7 +121,9 @@ export const NotificationProviderInner: FC<NotificationProviderProps> = ({
 export const NotificationProvider: FC<{ children?: React.ReactNode }> = ({
   children,
 }) => {
-  const familyId = useCurrentFamily()
+  const { family } = useFamily()
+  const familyId = family?.id ?? null
+  if (DEBUG) console.log('[Notifications] familyId:', familyId, '(from API)')
   return (
     <NotificationProviderInner familyId={familyId}>
       {children}
