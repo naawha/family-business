@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common'
+import { FamiliesModule } from '../families/families.module'
+import { WebsocketModule } from '../websocket/websocket.module'
 import { ShoppingService } from './shopping.service'
 import { ShoppingController } from './shopping.controller'
-import { FamiliesService } from 'src/families/families.service'
 
 @Module({
-  providers: [ShoppingService, FamiliesService],
+  imports: [FamiliesModule, WebsocketModule],
+  providers: [ShoppingService],
   controllers: [ShoppingController],
 })
 export class ShoppingModule {}

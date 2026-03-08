@@ -1,2 +1,2 @@
 export { default as MainService } from './service'
-export { RTK_TAGS } from './tags'
+export { RTK_TAGS, type RtkTagType } from './tags'

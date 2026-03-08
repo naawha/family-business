@@ -3,6 +3,7 @@ import { AppProps } from 'next/app'
 import { wrapper } from '@/app/api/wrapper'
 import { Provider } from 'react-redux'
 import ThemeProvider from '@/app/providers/ThemeProvider'
+import NotificationProvider from '@/app/providers/NotificationProvider'
 
 import '@/app/styles/main.css'
 
@@ -12,7 +13,9 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <Provider store={store}>
       <ThemeProvider>
-        <Component {...pageProps} />
+        <NotificationProvider>
+          <Component {...pageProps} />
+        </NotificationProvider>
       </ThemeProvider>
     </Provider>
   )

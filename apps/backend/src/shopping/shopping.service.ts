@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
+import { EventsGateway } from '../websocket/events.gateway'
 import type { CreateBodyType, UpdateBodyType } from '@family-business/types/modules/shopping'
-import { FamiliesService } from 'src/families/families.service'
+import { FamiliesService } from '../families/families.service'
 
 @Injectable()
 export class ShoppingService {
   constructor(
     private prisma: PrismaService,
     private families: FamiliesService,
+    private events: EventsGateway,
   ) {}
 
   async findAll(userId: string, familyId?: string) {
@@ -37,7 +39,7 @@ export class ShoppingService {
   }
 
   async create(userId: string, data: CreateBodyType) {
-    return this.prisma.shoppingItem.create({
+    const item = await this.prisma.shoppingItem.create({
       data: {
         ...data,
         createdById: userId,
@@ -51,10 +53,12 @@ export class ShoppingService {
         },
       },
     })
+    this.events.emitShoppingCreated(data.familyId, item)
+    return item
   }
 
   async update(id: string, data: UpdateBodyType) {
-    return this.prisma.shoppingItem.update({
+    const item = await this.prisma.shoppingItem.update({
       where: { id },
       data,
       include: {
@@ -66,9 +70,16 @@ export class ShoppingService {
         },
       },
     })
+    this.events.emitShoppingUpdated(item.familyId, item)
+    return item
   }
 
   async delete(id: string) {
-    return this.prisma.shoppingItem.delete({ where: { id } })
+    const item = await this.prisma.shoppingItem.findUnique({ where: { id } })
+    const deleted = await this.prisma.shoppingItem.delete({ where: { id } })
+    if (item) {
+      this.events.emitShoppingDeleted(item.familyId, id)
+    }
+    return deleted
   }
 }

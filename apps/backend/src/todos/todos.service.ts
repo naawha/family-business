@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { FamiliesService } from '../families/families.service'
+import { EventsGateway } from '../websocket/events.gateway'
 import type { CreateBodyType, UpdateBodyType } from '@family-business/types/modules/todos'
 
 const todoInclude = {
@@ -33,6 +34,7 @@ export class TodosService {
   constructor(
     private prisma: PrismaService,
     private families: FamiliesService,
+    private events: EventsGateway,
   ) {}
 
   async findAll(userId: string, familyId?: string) {
@@ -97,10 +99,12 @@ export class TodosService {
     if (data.dueDate != null) {
       createData.dueDate = typeof data.dueDate === 'string' ? new Date(data.dueDate) : data.dueDate
     }
-    return this.prisma.todo.create({
+    const todo = await this.prisma.todo.create({
       data: createData,
       include: todoInclude,
     })
+    this.events.emitTodoCreated(targetFamilyId, todo)
+    return todo
   }
 
   async update(userId: string, id: string, data: UpdateBodyType) {
@@ -121,21 +125,25 @@ export class TodosService {
           : data.dueDate
         : null
     }
-    return this.prisma.todo.update({
+    const todo = await this.prisma.todo.update({
       where: { id },
       data: updateData,
       include: todoInclude,
     })
+    this.events.emitTodoUpdated(todo.familyId, todo)
+    return todo
   }
 
   async delete(userId: string, id: string) {
-    await this.findOne(userId, id)
-    return this.prisma.todo.delete({ where: { id } })
+    const todo = await this.findOne(userId, id)
+    const deleted = await this.prisma.todo.delete({ where: { id } })
+    this.events.emitTodoDeleted(todo.familyId, id)
+    return deleted
   }
 
   async toggle(userId: string, id: string, completed: boolean) {
     const todo = await this.findOne(userId, id)
-    return this.prisma.todo.update({
+    const updated = await this.prisma.todo.update({
       where: { id },
       data: {
         completed,
@@ -143,5 +151,7 @@ export class TodosService {
       },
       include: todoInclude,
     })
+    this.events.emitTodoUpdated(todo.familyId, updated)
+    return updated
   }
 }
