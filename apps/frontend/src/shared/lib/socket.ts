@@ -4,6 +4,7 @@ import { API_URL } from '@/shared/config'
 const DEBUG = typeof window !== 'undefined' && window.location.search.includes('notify_debug=1')
 
 let socket: Socket | null = null
+let currentFamilyId: string | null = null
 
 /**
  * Get socket.io server URL. In dev API is on different port; in prod same origin.
@@ -36,6 +37,11 @@ export function getSocket(): Socket | null {
     })
     socket.on('connect', () => {
       if (DEBUG) console.log('[Notifications] Socket connected:', socket?.id)
+      // При каждом connect (в т.ч. после reconnect) — снова входим в комнату
+      if (currentFamilyId) {
+        socket?.emit('family:join', currentFamilyId)
+        if (DEBUG) console.log('[Notifications] Re-joined family room on reconnect:', currentFamilyId)
+      }
     })
     socket.on('connect_error', (err) => {
       console.warn('[Notifications] Socket connect error:', err.message)
@@ -50,10 +56,13 @@ export function getSocket(): Socket | null {
 
 /**
  * Connect socket and join family room.
+ * При reconnect (мобильный браузер возвращает приложение из фона) — автоматически переподключаемся к комнате.
  */
 export function connectSocket(familyId: string): void {
   const s = getSocket()
   if (!s) return
+
+  currentFamilyId = familyId
 
   const doJoin = () => {
     s.emit('family:join', familyId)
@@ -76,6 +85,7 @@ export function disconnectSocket(familyId?: string): void {
 
   if (familyId) {
     s.emit('family:leave', familyId)
+    if (currentFamilyId === familyId) currentFamilyId = null
   }
   s.disconnect()
 }

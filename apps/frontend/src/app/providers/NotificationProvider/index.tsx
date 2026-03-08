@@ -105,6 +105,11 @@ export const NotificationProviderInner: FC<NotificationProviderProps> = ({
     for (const event of events) {
       unsubscribes.push(onSocketEvent(event, handleSocketEvent(event)))
     }
+    // Отладка: family:presence приходит при входе в комнату — проверка, что события доходят
+    const unsubPresence = onSocketEvent('family:presence', (data: unknown) => {
+      if (DEBUG) console.log('[Notifications] family:presence received (socket OK):', data)
+    })
+    unsubscribes.push(unsubPresence)
 
     return () => {
       unsubscribes.forEach((unsub) => unsub())

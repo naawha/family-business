@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io'
 
 @WebSocketGateway({
   cors: {
-    origin: ['http://localhost:3001', 'http://localhost:8081'],
+    origin: true, // Разрешаем все origin (в prod nginx на одном домене)
     credentials: true,
   },
 })
@@ -67,9 +67,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   // Emit events to family members
   emitToFamily(familyId: string, event: string, data: any) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`[EventsGateway] Emitting ${event} to family ${familyId}`)
-    }
+    console.log(`[EventsGateway] Emitting ${event} to family ${familyId}`)
     this.server.to(familyId).emit(event, data)
   }
 
