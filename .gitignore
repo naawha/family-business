@@ -69,3 +69,5 @@ apps/frontend/public/swe-worker-*.js
 apps/frontend/public/swe-worker-*.js.map
 apps/frontend/public/fallback-*.js
 apps/frontend/public/fallback-*.js.map
+
+.env.production
