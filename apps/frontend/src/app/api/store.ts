@@ -53,7 +53,8 @@ export const makeStore = (_context: Context) => {
   setupListeners(store.dispatch)
 
   if (typeof window !== 'undefined') {
-    ;(store as typeof store & { __persistor?: Persistor }).__persistor = persistStore(store)
+    const storeWithPersistor = store as typeof store & { __persistor?: Persistor }
+    storeWithPersistor.__persistor = persistStore(store)
   }
 
   return store
