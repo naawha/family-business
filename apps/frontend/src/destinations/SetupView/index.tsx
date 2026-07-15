@@ -46,11 +46,6 @@ const SetupView: FC = () => {
     try {
       const family = await createFamily({ name: familyName.trim() }).unwrap()
       saveCurrentFamily(family.id)
-      notifications.show({
-        title: 'Успех',
-        message: 'Семья создана',
-        color: 'green',
-      })
       router.push('/dashboard')
     } catch {
       notifications.show({
@@ -75,11 +70,6 @@ const SetupView: FC = () => {
         if ('familyId' in result) {
           saveCurrentFamily(result.familyId)
         }
-        notifications.show({
-          title: 'Успех',
-          message: 'Вы присоединились к семье',
-          color: 'green',
-        })
         router.push('/dashboard')
       } catch {
         notifications.show({

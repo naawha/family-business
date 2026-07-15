@@ -22,11 +22,6 @@ const FamilyMemberRemovalModal: FC<FamilyMemberRemovalModalProps> = ({
     try {
       await removeMember({ id: familyId, memberId })
       onClose()
-      notifications.show({
-        title: 'Успех',
-        message: 'Участник удален',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

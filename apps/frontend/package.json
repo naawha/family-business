@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ducanh2912/next-pwa": "^10.2.9",
     "@family-business/theme": "workspace:*",
     "@family-business/types": "workspace:*",
     "@mantine/core": "^7.5.0",
@@ -31,8 +32,7 @@
     "react-final-form": "^7.0.0",
     "react-markdown": "^10.1.0",
     "react-redux": "^9.1.0",
-    "react-swipeable": "^7.0.2",
-    "react-swipeable-list": "^1.10.0",
+    "redux-persist": "^6.0.0",
     "socket.io-client": "^4.7.0"
   },
   "devDependencies": {

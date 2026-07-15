@@ -20,11 +20,6 @@ const DashboardShoppingView: FC = () => {
       for (const item of toDelete) {
         await deleteItem({ id: item.id }).unwrap()
       }
-      notifications.show({
-        title: 'Готово',
-        message: `Удалено товаров: ${toDelete.length}`,
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

@@ -25,12 +25,6 @@ const CreateTodoModal: FC<CreateTodoModalProps> = ({ opened, onClose }) => {
       }).unwrap()
 
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Задача создана',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

@@ -48,12 +48,6 @@ const CreateRecipeModal: FC<CreateRecipeModalProps> = ({ opened, onClose }) => {
       }).unwrap()
 
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Рецепт создан',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

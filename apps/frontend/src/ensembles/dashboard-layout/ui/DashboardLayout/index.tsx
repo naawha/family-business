@@ -1,4 +1,5 @@
-import { FC, ReactNode, useEffect } from 'react'
+import { FC, ReactNode, useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { AppShell, Burger, Group, Title, NavLink, Box, Stack, Text } from '@mantine/core'
 
@@ -7,7 +8,6 @@ import { useDisclosure } from '@mantine/hooks'
 import {
   IconChecklist,
   IconShoppingCart,
-  IconBuildingCommunity,
   IconBook,
   IconBookFilled,
   IconSettings,
@@ -15,6 +15,8 @@ import {
   IconShoppingCartFilled,
   IconBriefcase,
   IconBriefcaseFilled,
+  IconNotebook,
+  IconNotes,
 } from '@tabler/icons-react'
 import { useFamily } from '@/models/accounts'
 import { PageHeader } from '@/shared/ui'
@@ -29,18 +31,31 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRight }) => {
   const router = useRouter()
-  const [opened, { toggle }] = useDisclosure()
+  const [opened, { toggle, close }] = useDisclosure()
   const { family, isLoading } = useFamily()
+  const [online, setOnline] = useState(true)
 
   useEffect(() => {
-    if (!isLoading && !family) {
+    const sync = () => setOnline(typeof navigator === 'undefined' || navigator.onLine)
+    sync()
+    window.addEventListener('online', sync)
+    window.addEventListener('offline', sync)
+    return () => {
+      window.removeEventListener('online', sync)
+      window.removeEventListener('offline', sync)
+    }
+  }, [])
+
+  useEffect(() => {
+    // Оффлайн: не гоним на /setup — показываем кэш (если есть)
+    if (!isLoading && !family && online) {
       router.replace('/setup')
     }
-  }, [isLoading, family, router])
+  }, [isLoading, family, router, online])
 
   const showPageHeader = title != null || headerRight != null
 
-  if (!isLoading && !family) {
+  if (!isLoading && !family && online) {
     return null
   }
 
@@ -60,34 +75,52 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
 
       <AppShell.Navbar p="md">
         <NavLink
+          component={Link}
           href="/dashboard"
           label="Главная"
           leftSection={<IconChecklist size={20} />}
           active={router.pathname === '/dashboard'}
+          onClick={close}
         />
         <NavLink
+          component={Link}
           href="/dashboard/todos"
           label="Задачи"
           leftSection={<IconChecklist size={20} />}
           active={router.pathname === '/dashboard/todos'}
+          onClick={close}
         />
         <NavLink
+          component={Link}
           href="/dashboard/shopping"
           label="Покупки"
           leftSection={<IconShoppingCart size={20} />}
           active={router.pathname === '/dashboard/shopping'}
+          onClick={close}
         />
         <NavLink
+          component={Link}
           href="/dashboard/recipes"
           label="Рецепты"
           leftSection={<IconBook size={20} />}
           active={router.pathname.startsWith('/dashboard/recipes')}
+          onClick={close}
         />
         <NavLink
+          component={Link}
+          href="/dashboard/notes"
+          label="Заметки"
+          leftSection={<IconNotebook size={20} />}
+          active={router.pathname.startsWith('/dashboard/notes')}
+          onClick={close}
+        />
+        <NavLink
+          component={Link}
           href="/dashboard/family"
           label="Семья"
           leftSection={<IconSettings size={20} />}
           active={router.pathname === '/dashboard/family'}
+          onClick={close}
         />
       </AppShell.Navbar>
 
@@ -111,6 +144,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
         <Group justify="space-around" gap="xs">
           <Box style={{ flex: 1 }}>
             <NavLink
+              component={Link}
               href="/dashboard/todos"
               style={{ padding: 4 }}
               label={
@@ -127,6 +161,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           </Box>
           <Box style={{ flex: 1 }}>
             <NavLink
+              component={Link}
               href="/dashboard/shopping"
               style={{ padding: 4 }}
               label={
@@ -143,6 +178,7 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           </Box>
           <Box style={{ flex: 1 }}>
             <NavLink
+              component={Link}
               href="/dashboard/recipes"
               style={{ padding: 4 }}
               label={
@@ -159,6 +195,24 @@ const DashboardLayout: FC<DashboardLayoutProps> = ({ children, title, headerRigh
           </Box>
           <Box style={{ flex: 1 }}>
             <NavLink
+              component={Link}
+              href="/dashboard/notes"
+              style={{ padding: 4 }}
+              label={
+                <Stack gap={2} align="center">
+                  {router.pathname.startsWith('/dashboard/notes') ? (
+                    <IconNotes size={20} />
+                  ) : (
+                    <IconNotebook size={20} />
+                  )}
+                  <Text size="xs">Заметки</Text>
+                </Stack>
+              }
+            />
+          </Box>
+          <Box style={{ flex: 1 }}>
+            <NavLink
+              component={Link}
               href="/dashboard/family"
               style={{ padding: 4 }}
               label={

@@ -84,6 +84,7 @@ const ShoppingList: FC<ShoppingListProps> = () => {
         onRefresh={handleRefresh}
         items={items}
         getKey={(item) => item.id}
+        style={{ marginBottom: '57px' }}
         emptyText="Список покупок пуст. Добавьте первый товар чтобы начать!"
         renderItem={(item) => (
           <ShoppingListItem

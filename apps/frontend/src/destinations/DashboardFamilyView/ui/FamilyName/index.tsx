@@ -28,11 +28,6 @@ const FamilyName: FC<FamilyNameProps> = () => {
       }).unwrap()
 
       setIsEditingName(false)
-      notifications.show({
-        title: 'Успех',
-        message: 'Название семьи обновлено',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

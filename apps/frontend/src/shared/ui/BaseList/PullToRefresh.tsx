@@ -126,7 +126,7 @@ const PullToRefresh: FC<PullToRefreshProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      style={{ touchAction: 'pan-y' }}
+      style={{ touchAction: 'pan-y pinch-zoom' }}
     >
       {showIndicator && (
         <div

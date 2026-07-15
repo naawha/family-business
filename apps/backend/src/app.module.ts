@@ -11,6 +11,7 @@ import { ShoppingModule } from './shopping/shopping.module'
 import { RecurringModule } from './recurring/recurring.module'
 import { WebsocketModule } from './websocket/websocket.module'
 import { RecipesModule } from './recipes/recipes.module'
+import { NotesModule } from './notes/notes.module'
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RecipesModule } from './recipes/recipes.module'
     RecurringModule,
     WebsocketModule,
     RecipesModule,
+    NotesModule,
   ],
   controllers: [AppController],
 })

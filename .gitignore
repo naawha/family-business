@@ -59,3 +59,13 @@ web-build/
 # Database
 *.db
 *.db-journal
+
+# PWA / Service Worker (генерируется @ducanh2912/next-pwa при build)
+apps/frontend/public/sw.js
+apps/frontend/public/sw.js.map
+apps/frontend/public/workbox-*.js
+apps/frontend/public/workbox-*.js.map
+apps/frontend/public/swe-worker-*.js
+apps/frontend/public/swe-worker-*.js.map
+apps/frontend/public/fallback-*.js
+apps/frontend/public/fallback-*.js.map

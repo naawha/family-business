@@ -9,7 +9,8 @@
     "./modules/accounts": "./modules/accounts/index.ts",
     "./modules/recipes": "./modules/recipes/index.ts",
     "./modules/shopping": "./modules/shopping/index.ts",
-    "./modules/todos": "./modules/todos/index.ts"
+    "./modules/todos": "./modules/todos/index.ts",
+    "./modules/notes": "./modules/notes/index.ts"
   },
   "dependencies": {},
   "devDependencies": {

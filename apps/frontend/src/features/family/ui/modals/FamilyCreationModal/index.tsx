@@ -22,12 +22,6 @@ const FamilyCreationModal: FC<FamilyCreationModalProps> = ({ opened, onClose }) 
 
       setName('')
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Семья успешно создана',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

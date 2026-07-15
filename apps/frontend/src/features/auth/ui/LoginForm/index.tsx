@@ -20,11 +20,6 @@ const LoginForm: FC<LoginFormProps> = () => {
     try {
       const result = await login({ email, password }).unwrap()
       saveAuth(result)
-      notifications.show({
-        title: 'Успех',
-        message: 'Вход выполнен успешно',
-        color: 'green',
-      })
       router.push('/dashboard')
     } catch (error) {
       notifications.show({

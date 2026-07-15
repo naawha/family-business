@@ -39,12 +39,6 @@ const EditTodoModal: FC<EditTodoModalProps> = ({ opened, onClose, item }) => {
       }).unwrap()
 
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Задача обновлена',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

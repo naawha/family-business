@@ -67,12 +67,6 @@ const EditRecipeModal: FC<EditRecipeModalProps> = ({ opened, onClose, recipe }) 
       }).unwrap()
 
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Рецепт обновлен',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

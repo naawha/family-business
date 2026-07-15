@@ -37,12 +37,6 @@ const EditShoppingItemModal: FC<EditShoppingItemModalProps> = ({ opened, onClose
       }).unwrap()
 
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Товар обновлен',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

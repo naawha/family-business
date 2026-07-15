@@ -51,11 +51,6 @@ const FamilyQRInviteModal: FC<FamilyQRInviteModalProps> = ({ opened, onClose }) 
     try {
       await inviteByEmail({ id: family.id, body: { email: inviteEmail.trim() } }).unwrap()
       setInviteEmail('')
-      notifications.show({
-        title: 'Успех',
-        message: 'Приглашение отправлено',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

@@ -20,11 +20,6 @@ const FamilyEmailInviteModal: FC<FamilyEmailInviteModalProps> = ({ opened, onClo
       await inviteByEmail({ id: familyId, body: { email: inviteEmail } })
       onClose()
       setInviteEmail('')
-      notifications.show({
-        title: 'Успех',
-        message: 'Участник приглашен',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

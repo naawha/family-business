@@ -1,7 +1,7 @@
 {
   "name": "Семейный бизнес",
   "short_name": "Семья",
-  "start_url": "/",
+  "start_url": "/dashboard/shopping",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

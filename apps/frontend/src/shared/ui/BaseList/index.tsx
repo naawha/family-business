@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, useCallback } from 'react'
+import { ReactNode, useState, useCallback } from 'react'
 import { Center, Loader, Stack, Text } from '@mantine/core'
 
 import PullToRefresh from './PullToRefresh'
@@ -34,6 +34,8 @@ interface BaseListProps<T> {
   renderEditOverlay?: (props: BaseListOverlayProps<T>) => ReactNode
   /** Pull-to-refresh: при свайпе вниз вызывается этот коллбек (должен вернуть Promise) */
   onRefresh?: () => void | Promise<void>
+  /** Стили для корневого элемента */
+  style?: React.CSSProperties
 }
 
 /**
@@ -52,6 +54,7 @@ const BaseList = <T extends { id: string }>({
   renderViewOverlay,
   renderEditOverlay,
   onRefresh,
+  style,
 }: BaseListProps<T>) => {
   const [viewItem, setViewItem] = useState<T | null>(null)
   const [editItem, setEditItem] = useState<T | null>(null)
@@ -82,20 +85,15 @@ const BaseList = <T extends { id: string }>({
     }
 
     return (
-      <Stack className={styles.list}>
-        {items
-          .map((item) =>
-            renderItem(item, {
+      <Stack className={styles.root} style={style}>
+        {items.map((item) => (
+          <div key={getKey(item)}>
+            {renderItem(item, {
               openView: (value) => setViewItem(value),
               openEdit: (value) => setEditItem(value),
-            }),
-          )
-          .map((node, index) => (
-            // Ключи берем из getKey, чтобы не требовать их в renderItem
-            <Stack key={getKey(items[index])} gap={0}>
-              {node}
-            </Stack>
-          ))}
+            })}
+          </div>
+        ))}
       </Stack>
     )
   }

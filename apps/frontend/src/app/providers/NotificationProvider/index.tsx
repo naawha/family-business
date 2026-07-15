@@ -1,6 +1,5 @@
 import { FC, useEffect, useCallback } from 'react'
 import { useStore } from 'react-redux'
-import { notifications } from '@mantine/notifications'
 
 const DEBUG =
   typeof window !== 'undefined' && window.location.search.includes('notify_debug=1')
@@ -49,23 +48,16 @@ function showNotification(event: string, data: unknown): void {
     console.log('[Notifications] Showing:', title, message, 'document.hidden:', document?.hidden, 'permission:', typeof Notification !== 'undefined' ? Notification.permission : 'N/A')
   }
 
-  if (typeof document !== 'undefined' && document.hidden) {
-    // App in background — use browser Notification API
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification(title, {
-        body: message || 'Есть новые изменения',
-        icon: '/icons/icon-192x192.png',
-        tag: event,
-      })
-    }
-  } else {
-    // App visible — use Mantine notifications
-    notifications.show({
-      title,
-      message: message || 'Обновите страницу',
-      color: 'green',
-    })
-  }
+  // Показываем только системные уведомления, когда приложение в фоне.
+  // В открытом приложении список и так обновляется через invalidateTags.
+  if (typeof document === 'undefined' || !document.hidden) return
+  if (!('Notification' in window) || Notification.permission !== 'granted') return
+
+  new Notification(title, {
+    body: message || 'Есть новые изменения',
+    icon: '/icons/icon-192x192.png',
+    tag: event,
+  })
 }
 
 interface NotificationProviderProps {

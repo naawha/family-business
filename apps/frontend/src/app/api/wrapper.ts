@@ -11,6 +11,8 @@ import MainService from './service'
 import { makeStore } from './store'
 import { _getIsProtectedUrl } from '@/shared/helpers/UrlHelper'
 
+const TOKEN_COOKIE_KEY = 'family-business-token'
+
 export const wrapper = createWrapper(makeStore)
 
 export const AppWrapper = ({
@@ -41,7 +43,7 @@ const DEFAULT_CONFIG: ReduxWrapperConfig<GetServerSidePropsContext> = {
 
 export const serverSideDataResolverWrapper = generateServerSideResolverWrapper({
   wrapper,
-  getUserState: async (_ctx, dispatch) => {
+  getUserState: async (ctx, dispatch) => {
     let isAuthenticated = false
     let userState: unknown = undefined
 
@@ -51,6 +53,12 @@ export const serverSideDataResolverWrapper = generateServerSideResolverWrapper({
     } catch (e) {
       console.error('Error getting user state')
       console.error(e)
+      // API недоступен, но токен есть — пускаем на страницу,
+      // клиент покажет данные из redux-persist
+      const token = ctx.req?.cookies?.[TOKEN_COOKIE_KEY]
+      if (token) {
+        isAuthenticated = true
+      }
     }
 
     return { userState, isAuthenticated }

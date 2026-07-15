@@ -24,12 +24,6 @@ const CreateShoppingItemModal: FC<CreateShoppingItemModalProps> = ({ opened, onC
       }).unwrap()
 
       onClose()
-
-      notifications.show({
-        title: 'Успех',
-        message: 'Товар добавлен в список',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

@@ -1,10 +1,46 @@
-.actions {
-  width: 120px;
-  height: 100%;
+.root {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+  /* Вся площадь строки — зона жеста */
+  width: 100%;
 }
 
-.action {
-  width: 60px;
-  height: 100%;
-  border-radius: 0;
+.actions {
+  position: absolute;
+  inset: 0 0 0 auto;
+  display: flex;
+  align-items: stretch;
+  z-index: 0;
+}
+
+.actionEdit,
+.actionDelete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  border: none;
+  padding: 0;
+  color: #fff;
+  cursor: pointer;
+}
+
+.actionEdit {
+  background: var(--mantine-color-blue-6);
+}
+
+.actionDelete {
+  background: var(--mantine-color-red-6);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  will-change: transform;
+  background: var(--mantine-color-body);
 }

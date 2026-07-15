@@ -97,11 +97,6 @@ const ViewRecipeDrawer: FC<ViewRecipeDrawerProps> = ({ opened, onClose, recipe }
           recipeId: recipe.id,
         }).unwrap()
       }
-      notifications.show({
-        title: 'Успех',
-        message: `Добавлено ${ingredientsToAdd.length} ингредиентов в список покупок`,
-        color: 'green',
-      })
       onClose()
     } catch {
       notifications.show({

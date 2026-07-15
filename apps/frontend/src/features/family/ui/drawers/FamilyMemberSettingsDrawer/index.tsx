@@ -56,7 +56,6 @@ const FamilyMemberSettingsDrawer: FC<FamilyMemberSettingsDrawerProps> = ({
     }
     try {
       await updateMe({ name: name.trim(), avatarEmoji }).unwrap()
-      notifications.show({ title: 'Успех', message: 'Профиль обновлён', color: 'green' })
       onClose()
     } catch {
       notifications.show({

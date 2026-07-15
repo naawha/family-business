@@ -1,9 +1,9 @@
-.list {
+.root {
   gap: var(--mantine-spacing-sm);
 }
 
 @media (max-width: 47.9375em) {
-  .list {
+  .root {
     gap: 0;
   }
 }

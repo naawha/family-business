@@ -78,11 +78,6 @@ const BaseListItem: FC<BaseListItemProps> = ({
     if (!confirmed) return
     try {
       await onDelete(itemId)
-      notifications.show({
-        title: 'Успех',
-        message: 'Элемент удален',
-        color: 'green',
-      })
     } catch {
       notifications.show({
         title: 'Ошибка',

@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { RTK_TAGS } from './tags'
 import Cookies from 'js-cookie'
-import type { FetchArgs, BaseQueryApi } from '@reduxjs/toolkit/query'
+import type { FetchArgs, BaseQueryApi, FetchBaseQueryError } from '@reduxjs/toolkit/query'
 import { HYDRATE } from '@naawha/next-rtk-wrapper'
 
 const TOKEN_COOKIE_KEY = 'family-business-token'
@@ -16,13 +16,14 @@ const getBaseUrl = () => {
   return host.replace(/\/$/, '') + '/api'
 }
 
-const dynamicBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions: any) => {
-  const rawBaseQuery = fetchBaseQuery({
+const rawBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions: object) => {
+  const baseQuery = fetchBaseQuery({
     baseUrl: getBaseUrl(),
-    prepareHeaders: (headers, api) => {
+    prepareHeaders: (headers, apiCtx) => {
       const token =
         typeof window === 'undefined'
-          ? (api as any).extra?.req?.cookies[TOKEN_COOKIE_KEY]
+          ? (apiCtx as { extra?: { req?: { cookies?: Record<string, string> } } }).extra?.req
+              ?.cookies?.[TOKEN_COOKIE_KEY]
           : Cookies.get(TOKEN_COOKIE_KEY)
 
       if (token) {
@@ -32,19 +33,36 @@ const dynamicBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions
     },
   })
 
+  return baseQuery(args, api, extraOptions)
+}
+
+/** Не ходим в сеть оффлайн — оставляем данные из persist/кэша. */
+const dynamicBaseQuery = async (args: FetchArgs, api: BaseQueryApi, extraOptions: object) => {
+  if (typeof window !== 'undefined' && typeof navigator !== 'undefined' && !navigator.onLine) {
+    return {
+      error: {
+        status: 'CUSTOM_ERROR',
+        error: 'OFFLINE',
+        data: 'OFFLINE',
+      } as FetchBaseQueryError & { data: string },
+    }
+  }
+
   return rawBaseQuery(args, api, extraOptions)
 }
 
 const MainService = createApi({
   reducerPath: 'mainService',
   baseQuery: dynamicBaseQuery,
+  /** Держим списки в памяти долго — оффлайн-просмотр между экранами */
+  keepUnusedDataFor: 60 * 60 * 24 * 7,
   extractRehydrationInfo(action: any, { reducerPath }) {
     if (action.type === HYDRATE) {
-      return action.payload[reducerPath]
+      return action.payload?.[reducerPath]
     }
   },
   tagTypes: [...Object.values(RTK_TAGS)],
-  endpoints: (builder) => ({}),
+  endpoints: () => ({}),
 })
 
 export default MainService

@@ -21,11 +21,6 @@ const RegisterForm: FC<RegisterFormProps> = () => {
     try {
       const result = await register({ name, email, password }).unwrap()
       saveAuth(result)
-      notifications.show({
-        title: 'Успех',
-        message: 'Аккаунт создан успешно',
-        color: 'green',
-      })
       router.push('/setup')
     } catch (error) {
       notifications.show({
